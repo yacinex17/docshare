@@ -1,0 +1,817 @@
+{% extends "accounts/base.html" %}
+{% load static %}
+
+{% block title %}Upload Document - DocShare{% endblock %}
+
+{% block extra_css %}
+<style>
+    .upload-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 3rem;
+        padding: 0 2rem;
+    }
+
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+        color: #64748b;
+        font-size: 1rem;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid #f1f5f9;
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 1.5rem 1.5rem 1rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    /* Error Messages */
+    .error-messages {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 6px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        color: #dc2626;
+    }
+
+    .field-errors {
+        color: #dc2626;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    /* File Upload Area */
+    .file-upload-area {
+        border: 2px dashed #cbd5e1;
+        border-radius: 8px;
+        padding: 3rem 2rem;
+        text-align: center;
+        background: #f8fafc;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .file-upload-area:hover {
+        border-color: #3b82f6;
+        background: #eff6ff;
+    }
+
+    .file-upload-area.drag-over {
+        border-color: #3b82f6;
+        background: #eff6ff;
+    }
+
+    .upload-icon {
+        font-size: 3rem;
+        color: #94a3b8;
+        margin-bottom: 1rem;
+    }
+
+    .upload-text {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 0.5rem;
+    }
+
+    .upload-subtext {
+        color: #64748b;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .select-file-btn {
+        background: #1e293b;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .select-file-btn:hover {
+        background: #0f172a;
+    }
+
+    /* Hide original file input */
+    .file-input-hidden {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    /* Form Styles */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-label.required::after {
+        content: " *";
+        color: #ef4444;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        transition: border-color 0.2s;
+        box-sizing: border-box;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-input.error,
+    .form-textarea.error,
+    .form-select.error {
+        border-color: #dc2626;
+    }
+
+    .form-textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    /* Upload Options */
+    .upload-options {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: #f8fafc;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .option-tab {
+        flex: 1;
+        padding: 0.75rem;
+        border: none;
+        background: white;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s;
+        color: #64748b;
+    }
+
+    .option-tab.active {
+        background: #3b82f6;
+        color: white;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+    }
+
+    .upload-section {
+        display: none;
+    }
+
+    .upload-section.active {
+        display: block;
+    }
+
+    /* Upload Button */
+    .upload-btn {
+        width: 100%;
+        background: #6b7280;
+        color: white;
+        border: none;
+        padding: 0.875rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .upload-btn:enabled {
+        background: #1e293b;
+    }
+
+    .upload-btn:enabled:hover {
+        background: #0f172a;
+    }
+
+    /* Sidebar Styles */
+    .sidebar-card {
+        margin-bottom: 1.5rem;
+    }
+
+    .sidebar-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .guidelines-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .guidelines-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .guidelines-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .section-title {
+        font-weight: 600;
+        color: #374151;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .guidelines-list li {
+        color: #64748b;
+        font-size: 0.85rem;
+        padding: 0.25rem 0;
+        padding-left: 1rem;
+        position: relative;
+    }
+
+    .guidelines-list li::before {
+        content: "•";
+        color: #3b82f6;
+        position: absolute;
+        left: 0;
+    }
+
+    /* Upload Status */
+    .status-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .status-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 0;
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+
+    .status-icon {
+        width: 16px;
+        height: 16px;
+        border: 2px solid #d1d5db;
+        border-radius: 50%;
+        position: relative;
+    }
+
+    .status-icon.completed {
+        border-color: #10b981;
+        background: #10b981;
+    }
+
+    .status-icon.completed::after {
+        content: "✓";
+        color: white;
+        font-size: 10px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    /* File Selected State */
+    .file-selected {
+        border-color: #10b981;
+        background: #f0fdf4;
+    }
+
+    .file-selected .upload-icon {
+        color: #10b981;
+    }
+
+    .file-selected .upload-text {
+        color: #10b981;
+    }
+
+    /* Link Selected State */
+    .link-provided {
+        border-color: #10b981;
+        background: #f0fdf4;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .upload-container {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            padding: 0 1rem;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .file-upload-area {
+            padding: 2rem 1rem;
+        }
+
+        .upload-options {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="upload-container">
+    <!-- Main Content -->
+    <div class="main-content">
+       
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Document Details</h2>
+            </div>
+            <div class="card-body">
+                <!-- Display non-field errors -->
+                {% if form.non_field_errors %}
+                    <div class="error-messages">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data" id="uploadForm">
+                    {% csrf_token %}
+                    
+                    <!-- Upload Type Selection -->
+                    <div class="upload-options">
+                        <button type="button" class="option-tab active" data-option="file">📤 Upload File</button>
+                        <button type="button" class="option-tab" data-option="link">🔗 Add Link</button>
+                    </div>
+
+                    <!-- File Upload Section -->
+                    <div class="upload-section active" id="file-section">
+                        <div class="form-group">
+                            <label class="form-label{% if form.file.field.required %} required{% endif %}">{{ form.file.label }}</label>
+                            <div class="file-upload-area" id="fileUploadArea">
+                                <div class="upload-icon">📤</div>
+                                <div class="upload-text">Choose a file to upload</div>
+                                <div class="upload-subtext">PDF, DOC, DOCX, or TXT files up to 10MB</div>
+                                <button type="button" class="select-file-btn" onclick="document.getElementById('{{ form.file.id_for_label }}').click()">
+                                    Select File
+                                </button>
+                                {{ form.file }}
+                            </div>
+                            <div id="selectedFileName" style="display: none; margin-top: 0.5rem; color: #10b981; font-weight: 500;"></div>
+                            {% if form.file.errors %}
+                                <div class="field-errors">
+                                    {{ form.file.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Link Upload Section -->
+                    <div class="upload-section" id="link-section">
+                        <div class="form-group">
+                            <label for="{{ form.link.id_for_label }}" class="form-label{% if form.link.field.required %} required{% endif %}">{{ form.link.label|default:"Document Link" }}</label>
+                            <input type="url" 
+                                   id="{{ form.link.id_for_label }}" 
+                                   name="{{ form.link.name }}" 
+                                   class="form-input{% if form.link.errors %} error{% endif %}" 
+                                   placeholder="https://example.com/document.pdf"
+                                   value="{{ form.link.value|default_if_none:'' }}">
+                            {% if form.link.errors %}
+                                <div class="field-errors">
+                                    {{ form.link.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Document Title -->
+                    <div class="form-group">
+                        <label for="{{ form.title.id_for_label }}" class="form-label{% if form.title.field.required %} required{% endif %}">{{ form.title.label }}</label>
+                        <input type="text" 
+                               id="{{ form.title.id_for_label }}" 
+                               name="{{ form.title.name }}" 
+                               class="form-input{% if form.title.errors %} error{% endif %}" 
+                               placeholder="e.g., Introduction to React Hooks"
+                               value="{{ form.title.value|default_if_none:'' }}"
+                               {% if form.title.field.required %}required{% endif %}>
+                        {% if form.title.errors %}
+                            <div class="field-errors">
+                                {{ form.title.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+                        <textarea id="{{ form.description.id_for_label }}" 
+                                  name="{{ form.description.name }}" 
+                                  class="form-textarea{% if form.description.errors %} error{% endif %}" 
+                                  placeholder="Brief description of the document content...">{{ form.description.value|default_if_none:'' }}</textarea>
+                        {% if form.description.errors %}
+                            <div class="field-errors">
+                                {{ form.description.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Subject and Sub-subject -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="{{ form.subject.id_for_label }}" class="form-label{% if form.subject.field.required %} required{% endif %}">{{ form.subject.label }}</label>
+                            <select id="{{ form.subject.id_for_label }}" 
+                                    name="{{ form.subject.name }}" 
+                                    class="form-select{% if form.subject.errors %} error{% endif %}"
+                                    {% if form.subject.field.required %}required{% endif %}>
+                                <option value="">Select subject</option>
+                                {% for value, text in form.subject.field.choices %}
+                                    {% if value %}
+                                        <option value="{{ value }}" {% if form.subject.value == value %}selected{% endif %}>{{ text }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            {% if form.subject.errors %}
+                                <div class="field-errors">
+                                    {{ form.subject.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ form.subsubject.id_for_label }}" class="form-label{% if form.subsubject.field.required %} required{% endif %}">{{ form.subsubject.label }}</label>
+                            <select id="{{ form.subsubject.id_for_label }}" 
+                                    name="{{ form.subsubject.name }}" 
+                                    class="form-select{% if form.subsubject.errors %} error{% endif %}"
+                                    {% if form.subsubject.field.required %}required{% endif %}>
+                                <option value="">Select sub-subject</option>
+                                {% for value, text in form.subsubject.field.choices %}
+                                    {% if value %}
+                                        <option value="{{ value }}" {% if form.subsubject.value == value %}selected{% endif %}>{{ text }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            {% if form.subsubject.errors %}
+                                <div class="field-errors">
+                                    {{ form.subsubject.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Tags -->
+                    <div class="form-group">
+                        <label for="{{ form.tags.id_for_label }}" class="form-label">{{ form.tags.label|default:"Tags" }}</label>
+                        <input type="text" 
+                               id="{{ form.tags.id_for_label }}" 
+                               name="{{ form.tags.name }}" 
+                               class="form-input{% if form.tags.errors %} error{% endif %}" 
+                               placeholder="e.g., beginner, tutorial, reference (comma separated)"
+                               value="{{ form.tags.value|default_if_none:'' }}">
+                        {% if form.tags.errors %}
+                            <div class="field-errors">
+                                {{ form.tags.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Document Type -->
+                    <div class="form-group">
+                        <label for="{{ form.type.id_for_label }}" class="form-label required">{{ form.type.label }}</label>
+                        <select id="{{ form.type.id_for_label }}" name="{{ form.type.name }}" class="form-select{% if form.type.errors %} error{% endif %}" required>
+                            {% for value, text in form.type.field.choices %}
+                                <option value="{{ value }}" {% if form.type.value == value %}selected{% endif %}>{{ text }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if form.type.errors %}
+                            <div class="field-errors">
+                                {{ form.type.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Upload Button -->
+                    <button type="submit" class="upload-btn" id="uploadBtn" disabled>
+                        📤 Upload Document
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Upload Guidelines -->
+         <br>
+         <br>
+         <br>
+        <div class="card sidebar-card">
+            
+            <div class="card-body">
+                <h3 class="sidebar-title">
+                    📋 Upload Guidelines
+                </h3>
+                
+                <div class="guidelines-section">
+                    <div class="section-title">Accepted Formats</div>
+                    <ul class="guidelines-list">
+                        <li>PDF documents</li>
+                        <li>Word documents (.doc, .docx)</li>
+                        <li>Text files (.txt)</li>
+                        <li>External document links</li>
+                    </ul>
+                </div>
+
+                <div class="guidelines-section">
+                    <div class="section-title">File Requirements</div>
+                    <ul class="guidelines-list">
+                        <li>Maximum file size: 10MB</li>
+                        <li>Clear, readable content</li>
+                        <li>Educational material only</li>
+                        <li>Valid URLs for external links</li>
+                    </ul>
+                </div>
+
+                <div class="guidelines-section">
+                    <div class="section-title">Best Practices</div>
+                    <ul class="guidelines-list">
+                        <li>Use descriptive titles</li>
+                        <li>Add relevant tags</li>
+                        <li>Choose correct subject category</li>
+                        <li>Include helpful descriptions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Status -->
+        <div class="card sidebar-card">
+            <div class="card-body">
+                <h3 class="sidebar-title">
+                    📊 Upload Status
+                </h3>
+                <ul class="status-list">
+                    <li class="status-item">
+                        <span class="status-icon" id="contentStatus"></span>
+                        <span id="contentStatusText">File or Link Provided</span>
+                    </li>
+                    <li class="status-item">
+                        <span class="status-icon" id="fieldsStatus"></span>
+                        Required Fields Complete
+                    </li>
+                    <li class="status-item">
+                        <span class="status-icon" id="readyStatus"></span>
+                        Ready to Upload
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('{{ form.file.id_for_label }}');
+    const linkInput = document.getElementById('{{ form.link.id_for_label }}');
+    const fileUploadArea = document.getElementById('fileUploadArea');
+    const selectedFileName = document.getElementById('selectedFileName');
+    const titleInput = document.getElementById('{{ form.title.id_for_label }}');
+    const subjectSelect = document.getElementById('{{ form.subject.id_for_label }}');
+    const subsubjectSelect = document.getElementById('{{ form.subsubject.id_for_label }}');
+    const uploadBtn = document.getElementById('uploadBtn');
+    
+    // Status indicators
+    const contentStatus = document.getElementById('contentStatus');
+    const contentStatusText = document.getElementById('contentStatusText');
+    const fieldsStatus = document.getElementById('fieldsStatus');
+    const readyStatus = document.getElementById('readyStatus');
+
+    // Upload option tabs
+    const optionTabs = document.querySelectorAll('.option-tab');
+    const uploadSections = document.querySelectorAll('.upload-section');
+    let currentUploadType = 'file';
+
+    // SubSubject data from backend
+    const subsubjects = [
+        {"id": 1, "name": "Boot Loader", "subject_id": 3},
+        {"id": 2, "name": "User Managment", "subject_id": 3}
+    ];
+
+    // Store all subsubject options
+    const allSubOptions = Array.from(subsubjectSelect.options).filter(opt => opt.value);
+
+    function filterSubsubjects() {
+        const selectedSubject = subjectSelect.value;
+        // Remove all except the first (placeholder)
+        subsubjectSelect.options.length = 1;
+        if (!selectedSubject) return;
+        // Add only subsubjects for selected subject
+        subsubjects.filter(s => s.subject_id == selectedSubject).forEach(sub => {
+            const opt = document.createElement('option');
+            opt.value = sub.id;
+            opt.textContent = sub.name;
+            subsubjectSelect.appendChild(opt);
+        });
+    }
+
+    subjectSelect.addEventListener('change', filterSubsubjects);
+    // Initial filter in case of pre-selected value
+    filterSubsubjects();
+
+    // Tab switching functionality
+    optionTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const option = this.dataset.option;
+            
+            // Update active tab
+            optionTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update active section
+            uploadSections.forEach(section => section.classList.remove('active'));
+            document.getElementById(option + '-section').classList.add('active');
+            
+            currentUploadType = option;
+            updateUploadStatus();
+        });
+    });
+
+    // File selection handling
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                fileUploadArea.classList.add('file-selected');
+                selectedFileName.textContent = `Selected: ${file.name}`;
+                selectedFileName.style.display = 'block';
+                // Clear link if file is selected
+                if (linkInput) linkInput.value = '';
+                updateUploadStatus();
+            }
+        });
+
+        // Drag and drop functionality
+        fileUploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            fileUploadArea.classList.add('drag-over');
+        });
+
+        fileUploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            fileUploadArea.classList.remove('drag-over');
+        });
+
+        fileUploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            fileUploadArea.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                fileInput.dispatchEvent(new Event('change'));
+            }
+        });
+
+        // Make file input hidden but functional
+        fileInput.style.display = 'none';
+    }
+
+    // Link input handling
+    if (linkInput) {
+        linkInput.addEventListener('input', function() {
+            if (this.value.trim()) {
+                // Clear file if link is provided
+                if (fileInput) {
+                    fileInput.value = '';
+                    fileUploadArea.classList.remove('file-selected');
+                    selectedFileName.style.display = 'none';
+                }
+            }
+            updateUploadStatus();
+        });
+    }
+
+    // Form validation
+    function updateUploadStatus() {
+        const hasFile = fileInput && fileInput.files.length > 0;
+        const hasLink = linkInput && linkInput.value.trim() !== '';
+        const hasContent = (currentUploadType === 'file' && hasFile) || 
+                          (currentUploadType === 'link' && hasLink);
+        const hasTitle = titleInput && titleInput.value.trim() !== '';
+        const hasSubject = subjectSelect && subjectSelect.value !== '';
+        
+        // Update content status
+        if (hasContent) {
+            contentStatus.classList.add('completed');
+            contentStatusText.textContent = currentUploadType === 'file' ? 'File Selected' : 'Link Provided';
+        } else {
+            contentStatus.classList.remove('completed');
+            contentStatusText.textContent = 'File or Link Provided';
+        }
+        
+        // Update fields status
+        if (hasTitle && hasSubject) {
+            fieldsStatus.classList.add('completed');
+        } else {
+            fieldsStatus.classList.remove('completed');
+        }
+        
+        // Update ready status and button
+        if (hasContent && hasTitle && hasSubject) {
+            readyStatus.classList.add('completed');
+            uploadBtn.disabled = false;
+        } else {
+            readyStatus.classList.remove('completed');
+            uploadBtn.disabled = true;
+        }
+    }
+
+    // Listen for form changes
+    if (titleInput) titleInput.addEventListener('input', updateUploadStatus);
+    if (subjectSelect) subjectSelect.addEventListener('change', updateUploadStatus);
+
+    // Initial status check
+    updateUploadStatus();
+
+    // Form submission handling
+    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+        if (currentUploadType === 'link' && fileInput) {
+            // Clear file input when submitting link
+            fileInput.value = '';
+        } else if (currentUploadType === 'file' && linkInput) {
+            // Clear link input when submitting file
+            linkInput.value = '';
+        }
+    });
+});
+</script>
+{% endblock %}

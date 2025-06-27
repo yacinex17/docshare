@@ -1,0 +1,241 @@
+{% extends "accounts/base.html" %}
+{% block title %}Subject Areas - DocShare{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #1e293b;
+    }
+
+    .page-subtitle {
+        font-size: 1.1rem;
+        color: #64748b;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    .subjects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .subject-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid #f1f5f9;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .subject-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .subject-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .subject-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+        background: #3b82f6; /* Default blue */
+    }
+
+    /* Subject-specific colors */
+    .subject-icon.computer-science { background: #3b82f6; }
+    .subject-icon.mathematics { background: #10b981; }
+    .subject-icon.physics { background: #8b5cf6; }
+    .subject-icon.chemistry { background: #f97316; }
+    .subject-icon.biology { background: #06b6d4; }
+    .subject-icon.literature { background: #ec4899; }
+    .subject-icon.history { background: #f59e0b; }
+    .subject-icon.economics { background: #ef4444; }
+    .subject-icon.psychology { background: #84cc16; }
+
+    .subject-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    .subject-description {
+        color: #64748b;
+        margin-bottom: 1.5rem;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .sub-subjects {
+        margin-bottom: 1.5rem;
+    }
+
+    .sub-subjects-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.75rem;
+    }
+
+    .sub-subjects-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .sub-subject-tag {
+        background: #f1f5f9;
+        color: #475569;
+        padding: 0.25rem 0.75rem;
+        border-radius: 16px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .subject-stats {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .stat {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        color: #64748b;
+        font-size: 0.875rem;
+    }
+
+    .explore-btn {
+        width: 100%;
+        background: #1e293b;
+        color: white;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        text-decoration: none;
+        display: block;
+        text-align: center;
+    }
+
+    .explore-btn:hover {
+        background: #0f172a;
+        color: white;
+        text-decoration: none;
+    }
+
+    .no-subjects {
+        text-align: center;
+        color: #64748b;
+        font-size: 1.1rem;
+        margin-top: 3rem;
+        padding: 2rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2rem;
+        }
+        
+        .subjects-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .subject-card {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:1200px;margin:40px auto;padding:0 2rem;">
+    <div class="page-header">
+        <h1 class="page-title">Subject Areas</h1>
+        <p class="page-subtitle">
+            Explore our comprehensive collection of educational materials organized by subject.<br>
+            Join subject communities and access thousands of shared documents.
+        </p>
+    </div>
+
+    <div class="subjects-grid">
+        {% for subject in subjects %}
+        <div class="subject-card">
+            <div class="subject-header">
+                <div class="subject-icon {{ subject.name|lower|slugify }}">
+                    {% if subject.icon %}
+                        {{ subject.icon }}
+                    {% else %}
+                        📚
+                    {% endif %}
+                </div>
+                <h2 class="subject-title">{{ subject.name }}</h2>
+            </div>
+            
+            <p class="subject-description">{{ subject.description }}</p>
+            
+            {% if subject.subsubjects.all %}
+            <div class="sub-subjects">
+                <h3 class="sub-subjects-title">Sub-subjects:</h3>
+                <div class="sub-subjects-list">
+                    {% for sub in subject.subsubjects.all %}
+                        <span class="sub-subject-tag">{{ sub.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Stats section - you can add these fields to your model or calculate them -->
+            <div class="subject-stats">
+                <span class="stat">
+                    📄 {{ subject.documents.count|default:"0" }} docs
+                </span>
+                <span class="stat">
+                    👥 {{ subject.members.count|default:"0" }} members
+                </span>
+            </div>
+            <a href="" class="explore-btn">
+                Explore Subject
+            </a>
+        </div>
+        {% empty %}
+        <div class="no-subjects">
+            <h3>No subjects found</h3>
+            <p>Check back later for new subject areas!</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
