@@ -43,6 +43,7 @@ class CustomUser(AbstractUser):
         return self.email
 
 class Subject(models.Model):
+    classroom = models.ForeignKey('Class', on_delete=models.CASCADE, related_name='subjects', null=True, blank=True)
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
     icon = models.CharField(max_length=100, blank=True)  # Optional: for icon class or path
@@ -65,6 +66,7 @@ class Document(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='documents')
+    classroom = models.ForeignKey('Class', on_delete=models.CASCADE, related_name='documents', null=True, blank=True)
     subsubject = models.ForeignKey(SubSubject, on_delete=models.CASCADE, blank=True, null=True)
     tags = models.CharField(max_length=255, blank=True)
     type = models.CharField(
@@ -87,3 +89,10 @@ class Document(models.Model):
 
     def __str__(self):
         return self.title
+
+class Class(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
