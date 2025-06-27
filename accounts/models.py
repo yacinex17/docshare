@@ -60,6 +60,8 @@ class SubSubject(models.Model):
 class Document(models.Model):
     file = models.FileField(upload_to='documents/', blank=True, null=True, help_text="Upload a file or provide a link below.")
     link = models.URLField(blank=True, null=True, help_text="Paste a link to an external document (e.g., Google Drive)")
+    corrected_file = models.FileField(upload_to='documents/', blank=True, null=True, help_text="Upload a corrected file if available.")
+    corrected_link = models.URLField(blank=True, null=True, help_text="Paste a link to a corrected document if available.")
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='documents')
@@ -68,16 +70,20 @@ class Document(models.Model):
     type = models.CharField(
         max_length=10,
         choices=[
-            ("Exam", "Exam"),
+            ("Cours", "Cours"),
             ("TD", "TD"),
+            ("Exam", "Exam"),
             ("DS", "DS"),
             ("TP", "TP"),
+            ("Resume", "Resume"),
+            ("Other", "Other"),
         ],
         default="TD",
         help_text="Type of document (Exam, TD, DS, TP)"
     )
     uploaded_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     uploaded_at = models.DateTimeField(auto_now_add=True)
+    has_correction = models.BooleanField(default=False, help_text="Check if a corrected version is provided.")
 
     def __str__(self):
         return self.title

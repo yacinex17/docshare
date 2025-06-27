@@ -23,7 +23,9 @@
                 {% if user.is_premium %}
                     <span class="premium-badge">Premium</span>
                 {% endif %}
+                {% comment %}
                 <p class="profile-bio">Computer Science student passionate about web development and machine learning.</p>
+                {% endcomment %}
             </div>
 
             <div class="profile-details">
@@ -32,12 +34,8 @@
                     <span>{{ user.email }}</span>
                 </div>
                 <div class="detail-item">
-                    <i class="icon">🏫</i>
-                    <span>MIT</span>
-                </div>
-                <div class="detail-item">
                     <i class="icon">📅</i>
-                    <span>Joined 1/15/2024</span>
+                    <span>Joined {{ user.date_joined|date:"M d, Y" }}</span>
                 </div>
             </div>
         </div>
@@ -49,7 +47,7 @@
                 <div class="stat-item">
                     <i class="stat-icon">📤</i>
                     <span class="stat-label">Documents Uploaded</span>
-                    <span class="stat-value">23</span>
+                    <span class="stat-value">{{ total_uploads }}</span>
                 </div>
                 <div class="stat-item">
                     <i class="stat-icon">📥</i>
@@ -78,44 +76,38 @@
                 <h3>📤 Recent Uploads</h3>
             </div>
             <div class="document-list">
-                <div class="document-item">
-                    <div class="doc-info">
-                        <h4>React Hooks Guide</h4>
-                        <div class="doc-meta">
-                            <span class="subject-tag">Computer Science</span>
-                            <span class="upload-date">Uploaded 1/20/2024</span>
+                {% if recent_uploads %}
+                    {% for document in recent_uploads %}
+                        <div class="document-item">
+                            <div class="doc-info">
+                                <h4>{{ document.title }}</h4>
+                                <div class="doc-meta">
+                                    <span class="subject-tag">{{ document.subject.name }}</span>
+                                    {% if document.subsubject %}
+                                        <span class="subsubject-tag">{{ document.subsubject.name }}</span>
+                                    {% endif %}
+                                    <span class="upload-date">Uploaded {{ document.uploaded_at|date:"M d, Y" }}</span>
+                                    <span class="doc-type">{{ document.type }}</span>
+                                </div>
+                            </div>
+                            <div class="doc-stats">
+                                {% if document.file %}
+                                    <a href="{{ document.file.url }}" target="_blank" class="download-link">📄 View File</a>
+                                {% elif document.link %}
+                                    <a href="{{ document.link }}" target="_blank" class="download-link">🔗 View Link</a>
+                                {% endif %}
+                                {% if document.has_correction %}
+                                    <span class="correction-badge">✅ Has Correction</span>
+                                {% endif %}
+                            </div>
                         </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-documents">
+                        <p>You haven't uploaded any documents yet.</p>
+                        <a href="{% url 'upload_document' %}" class="btn btn-primary">Upload Your First Document</a>
                     </div>
-                    <div class="doc-stats">
-                        <span class="download-count">45 downloads</span>
-                    </div>
-                </div>
-                
-                <div class="document-item">
-                    <div class="doc-info">
-                        <h4>Data Structures Notes</h4>
-                        <div class="doc-meta">
-                            <span class="subject-tag">Computer Science</span>
-                            <span class="upload-date">Uploaded 1/18/2024</span>
-                        </div>
-                    </div>
-                    <div class="doc-stats">
-                        <span class="download-count">32 downloads</span>
-                    </div>
-                </div>
-                
-                <div class="document-item">
-                    <div class="doc-info">
-                        <h4>Algorithm Analysis</h4>
-                        <div class="doc-meta">
-                            <span class="subject-tag">Computer Science</span>
-                            <span class="upload-date">Uploaded 1/15/2024</span>
-                        </div>
-                    </div>
-                    <div class="doc-stats">
-                        <span class="download-count">28 downloads</span>
-                    </div>
-                </div>
+                {% endif %}
             </div>
         </div>
 
@@ -125,40 +117,9 @@
                 <h3>📥 Recent Downloads</h3>
             </div>
             <div class="document-list">
-                <div class="document-item">
-                    <div class="doc-icon">📄</div>
-                    <div class="doc-info">
-                        <h4>Machine Learning Basics</h4>
-                        <div class="doc-meta">
-                            <span class="subject-tag">Computer Science</span>
-                            <span class="download-date">Downloaded 1/22/2024</span>
-                        </div>
-                    </div>
-                    <button class="view-btn">View</button>
-                </div>
-                
-                <div class="document-item">
-                    <div class="doc-icon">📄</div>
-                    <div class="doc-info">
-                        <h4>Linear Algebra</h4>
-                        <div class="doc-meta">
-                            <span class="subject-tag">Mathematics</span>
-                            <span class="download-date">Downloaded 1/21/2024</span>
-                        </div>
-                    </div>
-                    <button class="view-btn">View</button>
-                </div>
-                
-                <div class="document-item">
-                    <div class="doc-icon">📄</div>
-                    <div class="doc-info">
-                        <h4>Physics Formulas</h4>
-                        <div class="doc-meta">
-                            <span class="subject-tag">Physics</span>
-                            <span class="download-date">Downloaded 1/20/2024</span>
-                        </div>
-                    </div>
-                    <button class="view-btn">View</button>
+                <div class="no-documents">
+                    <p>Download tracking is not yet implemented.</p>
+                    <p>This feature will show your recently downloaded documents.</p>
                 </div>
             </div>
         </div>
@@ -395,6 +356,56 @@ body {
     border-radius: 12px;
     font-size: 0.75rem;
     font-weight: 500;
+}
+
+.subsubject-tag {
+    background: #f0f9ff;
+    color: #0284c7;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.doc-type {
+    background: #fef3c7;
+    color: #d97706;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.download-link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.download-link:hover {
+    text-decoration: underline;
+}
+
+.correction-badge {
+    background: #dcfce7;
+    color: #16a34a;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-left: 0.5rem;
+}
+
+.no-documents {
+    text-align: center;
+    padding: 2rem;
+    color: #64748b;
+}
+
+.no-documents p {
+    margin-bottom: 1rem;
+    font-size: 1rem;
 }
 
 .doc-stats {

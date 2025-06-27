@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
-from .models import CustomUser, Subject
+from .models import CustomUser, Subject, Document
 from .forms import CustomUserCreationForm, DocumentForm
 from django.contrib.auth.decorators import login_required
 
@@ -50,7 +50,20 @@ def subjects_list(request):
 def profile_view(request):
     if not request.user.is_authenticated:
         return redirect('login')
-    return render(request, 'accounts/profile.html', {'user': request.user})
+    
+    # Get user's recent uploaded documents
+    recent_uploads = Document.objects.filter(uploaded_by=request.user).order_by('-uploaded_at')[:5]
+    
+    # Calculate user statistics
+    total_uploads = Document.objects.filter(uploaded_by=request.user).count()
+    
+    context = {
+        'user': request.user,
+        'recent_uploads': recent_uploads,
+        'total_uploads': total_uploads,
+    }
+    
+    return render(request, 'accounts/profile.html', context)
 
 @login_required
 def edit_profile_view(request):
@@ -77,6 +90,10 @@ def upload_document_view(request):
         if form.is_valid():
             document = form.save(commit=False)
             document.uploaded_by = request.user
+            # Save has_correction and corrected fields
+            document.has_correction = form.cleaned_data.get('has_correction', False)
+            document.corrected_file = form.cleaned_data.get('corrected_file')
+            document.corrected_link = form.cleaned_data.get('corrected_link')
             document.save()
             # Optionally, add a success message
             return redirect('home')

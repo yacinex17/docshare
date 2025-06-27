@@ -69,48 +69,44 @@
         font-size: 0.875rem;
         margin-top: 0.25rem;
     }
+/* File Upload Area - Smaller Version */
+/* File Upload Area - Extra Small Version */
+.file-upload-area {
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 4px;
+    padding: 0.8rem 0.6rem;
+    text-align: center;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-bottom: 0.8rem;
+    position: relative;
+}
 
-    /* File Upload Area */
-    .file-upload-area {
-        border: 2px dashed #cbd5e1;
-        border-radius: 8px;
-        padding: 3rem 2rem;
-        text-align: center;
-        background: #f8fafc;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        margin-bottom: 1.5rem;
-        position: relative;
-    }
+.file-upload-area:hover,
+.file-upload-area.drag-over {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
 
-    .file-upload-area:hover {
-        border-color: #3b82f6;
-        background: #eff6ff;
-    }
+.upload-icon {
+    font-size: 1.5rem;
+    color: #94a3b8;
+    margin-bottom: 0.4rem;
+}
 
-    .file-upload-area.drag-over {
-        border-color: #3b82f6;
-        background: #eff6ff;
-    }
+.upload-text {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.2rem;
+}
 
-    .upload-icon {
-        font-size: 3rem;
-        color: #94a3b8;
-        margin-bottom: 1rem;
-    }
-
-    .upload-text {
-        font-size: 1.1rem;
-        font-weight: 500;
-        color: #374151;
-        margin-bottom: 0.5rem;
-    }
-
-    .upload-subtext {
-        color: #64748b;
-        font-size: 0.9rem;
-        margin-bottom: 1.5rem;
-    }
+.upload-subtext {
+    color: #64748b;
+    font-size: 0.7rem;
+    margin-bottom: 0.6rem;
+}
 
     .select-file-btn {
         background: #1e293b;
@@ -225,6 +221,157 @@
 
     .upload-section.active {
         display: block;
+    }
+
+    /* Custom Checkbox */
+    .custom-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer;
+        padding: 0.75rem;
+        border-radius: 8px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s ease;
+        margin-bottom: 0.5rem;
+    }
+
+    .custom-checkbox:hover {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+    }
+
+    .custom-checkbox input[type="checkbox"] {
+        position: relative;
+        width: 20px;
+        height: 20px;
+        margin: 0;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        background: white;
+        border: 2px solid #d1d5db;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .custom-checkbox input[type="checkbox"]:checked {
+        background: #3b82f6;
+        border-color: #3b82f6;
+    }
+
+    .custom-checkbox input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .custom-checkbox input[type="checkbox"]:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .custom-checkbox label {
+        color: #374151;
+        font-weight: 500;
+        font-size: 0.95rem;
+        cursor: pointer;
+        margin: 0;
+        flex: 1;
+    }
+
+    .custom-checkbox.checked {
+        background: #eff6ff;
+        border-color: #3b82f6;
+    }
+
+    /* Custom File Upload for Corrections */
+/* Custom File Upload for Corrections - Smaller Version */
+.correction-file-upload {
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 4px;
+    padding: 0.8rem 0.6rem;
+    text-align: center;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    margin-top: 0.4rem;
+}
+
+.correction-file-upload:hover,
+.correction-file-upload.drag-over,
+.correction-file-upload.file-selected {
+    border-color: #10b981;
+    background: #f0fdf4;
+}
+
+.correction-upload-icon {
+    font-size: 1.25rem;
+    color: #94a3b8;
+    margin-bottom: 0.3rem;
+}
+
+.correction-upload-text {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.15rem;
+}
+
+.correction-upload-subtext {
+    color: #64748b;
+    font-size: 0.65rem;
+    margin-bottom: 0.4rem;
+}
+
+    .correction-select-btn {
+        background: #10b981;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.2s;
+        font-size: 0.875rem;
+    }
+
+    .correction-select-btn:hover {
+        background: #059669;
+    }
+
+    .correction-file-upload input[type="file"] {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+    }
+
+    .correction-file-upload.file-selected .correction-upload-icon {
+        color: #10b981;
+    }
+
+    .correction-file-upload.file-selected .correction-upload-text {
+        color: #10b981;
+    }
+
+    .correction-file-name {
+        display: none;
+        margin-top: 0.5rem;
+        color: #10b981;
+        font-weight: 500;
+        font-size: 0.875rem;
     }
 
     /* Upload Button */
@@ -452,6 +599,42 @@
                                     {{ form.link.errors }}
                                 </div>
                             {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Has Correction Checkbox -->
+                    <div class="form-group">
+                        <div class="custom-checkbox" id="customCheckboxContainer">
+                            {{ form.has_correction }}
+                            <label for="id_has_correction">This document has a correction/solution available</label>
+                        </div>
+                    </div>
+
+                    <!-- Corrected File/Link Section (hidden unless has_correction is checked) -->
+                    <div id="correction-section" style="display: none;">
+                        <div class="form-group" id="corrected-file-group">
+                            <label for="id_corrected_file" class="form-label">Corrected File</label>
+                            <div class="correction-file-upload" id="correctionFileUploadArea">
+                                <div class="correction-upload-icon">✅</div>
+                                <div class="correction-upload-text">Choose correction file</div>
+                                <div class="correction-upload-subtext">PDF, DOC, DOCX, or TXT files up to 10MB</div>
+                                <button type="button" class="correction-select-btn" onclick="document.getElementById('id_corrected_file').click()">
+                                    Select Correction
+                                </button>
+                                <input type="file" 
+                                       id="id_corrected_file" 
+                                       name="corrected_file" 
+                                       accept=".pdf,.doc,.docx,.txt">
+                            </div>
+                            <div id="correctionFileName" class="correction-file-name"></div>
+                        </div>
+                        <div class="form-group" id="corrected-link-group">
+                            <label for="id_corrected_link" class="form-label">Corrected Link</label>
+                            <input type="url" 
+                                   id="id_corrected_link" 
+                                   name="corrected_link" 
+                                   class="form-input"
+                                   placeholder="https://example.com/corrected-document.pdf">
                         </div>
                     </div>
 
@@ -701,6 +884,12 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById(option + '-section').classList.add('active');
             
             currentUploadType = option;
+            
+            // Update correction inputs if correction section is visible
+            if (correctionSection && correctionSection.style.display === 'block') {
+                updateCorrectionInputs();
+            }
+            
             updateUploadStatus();
         });
     });
@@ -812,6 +1001,107 @@ document.addEventListener('DOMContentLoaded', function() {
             linkInput.value = '';
         }
     });
+
+    // Show/hide correction section based on checkbox
+    const hasCorrection = document.getElementById('id_has_correction');
+    const correctionSection = document.getElementById('correction-section');
+    const customCheckboxContainer = document.getElementById('customCheckboxContainer');
+    const correctedFileGroup = document.getElementById('corrected-file-group');
+    const correctedLinkGroup = document.getElementById('corrected-link-group');
+    const correctedFileInput = document.getElementById('id_corrected_file');
+    const correctionFileUploadArea = document.getElementById('correctionFileUploadArea');
+    const correctionFileName = document.getElementById('correctionFileName');
+    
+    // Corrected file selection handling
+    if (correctedFileInput && correctionFileUploadArea) {
+        correctedFileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                correctionFileUploadArea.classList.add('file-selected');
+                correctionFileName.textContent = `Selected: ${file.name}`;
+                correctionFileName.style.display = 'block';
+            } else {
+                correctionFileUploadArea.classList.remove('file-selected');
+                correctionFileName.style.display = 'none';
+            }
+        });
+
+        // Drag and drop for correction file
+        correctionFileUploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            correctionFileUploadArea.classList.add('drag-over');
+        });
+
+        correctionFileUploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            correctionFileUploadArea.classList.remove('drag-over');
+        });
+
+        correctionFileUploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            correctionFileUploadArea.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                correctedFileInput.files = files;
+                correctedFileInput.dispatchEvent(new Event('change'));
+            }
+        });
+    }
+    
+    function toggleCorrectionSection() {
+        const isChecked = hasCorrection.checked;
+        correctionSection.style.display = isChecked ? 'block' : 'none';
+        if (customCheckboxContainer) {
+            if (isChecked) {
+                customCheckboxContainer.classList.add('checked');
+            } else {
+                customCheckboxContainer.classList.remove('checked');
+            }
+        }
+        
+        // Show/hide correction inputs based on upload type
+        if (isChecked) {
+            updateCorrectionInputs();
+        }
+    }
+    
+    function updateCorrectionInputs() {
+        if (currentUploadType === 'file') {
+            correctedFileGroup.style.display = 'block';
+            correctedLinkGroup.style.display = 'none';
+            // Clear link input when showing file
+            document.getElementById('id_corrected_link').value = '';
+        } else if (currentUploadType === 'link') {
+            correctedFileGroup.style.display = 'none';
+            correctedLinkGroup.style.display = 'block';
+            // Clear file input when showing link
+            if (correctedFileInput) {
+                correctedFileInput.value = '';
+                correctionFileUploadArea.classList.remove('file-selected');
+                correctionFileName.style.display = 'none';
+            }
+        }
+    }
+    
+    if (hasCorrection && customCheckboxContainer) {
+        // Add click event to the entire container
+        customCheckboxContainer.addEventListener('click', function(e) {
+            // Prevent double firing if clicking directly on checkbox
+            if (e.target !== hasCorrection) {
+                hasCorrection.checked = !hasCorrection.checked;
+                toggleCorrectionSection();
+            }
+        });
+        
+        // Add change event to checkbox itself
+        hasCorrection.addEventListener('change', toggleCorrectionSection);
+        
+        // Initial state
+        toggleCorrectionSection();
+    }
 });
+
+// Remove the old toggleCheckbox function as it's no longer needed
 </script>
 {% endblock %}
