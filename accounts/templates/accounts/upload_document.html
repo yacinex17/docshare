@@ -669,7 +669,7 @@
                         {% endif %}
                     </div>
 
-                    <!-- Subject and Sub-subject -->
+                    <!-- Subject, Classroom, and Sub-subject -->
                     <div class="form-row">
                         <div class="form-group">
                             <label for="{{ form.subject.id_for_label }}" class="form-label{% if form.subject.field.required %} required{% endif %}">{{ form.subject.label }}</label>
@@ -687,6 +687,25 @@
                             {% if form.subject.errors %}
                                 <div class="field-errors">
                                     {{ form.subject.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ form.classroom.id_for_label }}" class="form-label{% if form.classroom.field.required %} required{% endif %}">{{ form.classroom.label }}</label>
+                            <select id="{{ form.classroom.id_for_label }}" 
+                                    name="{{ form.classroom.name }}" 
+                                    class="form-select{% if form.classroom.errors %} error{% endif %}"
+                                    {% if form.classroom.field.required %}required{% endif %}>
+                                <option value="">Select class</option>
+                                {% for value, text in form.classroom.field.choices %}
+                                    {% if value %}
+                                        <option value="{{ value }}" {% if form.classroom.value == value %}selected{% endif %}>{{ text }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            {% if form.classroom.errors %}
+                                <div class="field-errors">
+                                    {{ form.classroom.errors }}
                                 </div>
                             {% endif %}
                         </div>

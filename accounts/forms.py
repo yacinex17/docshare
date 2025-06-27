@@ -24,7 +24,7 @@ class DocumentForm(forms.ModelForm):
 
     class Meta:
         model = Document
-        fields = ['file', 'link', 'title', 'description', 'subject', 'subsubject', 'tags', 'type', 'has_correction', 'corrected_file', 'corrected_link']
+        fields = ['file', 'link', 'title', 'description', 'subject', 'classroom', 'subsubject', 'tags', 'type', 'has_correction', 'corrected_file', 'corrected_link']
 
     def clean(self):
         cleaned_data = super().clean()
